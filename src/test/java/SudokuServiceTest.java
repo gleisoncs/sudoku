@@ -26,10 +26,11 @@ public class SudokuServiceTest {
 	SudokuService sudokuService;
 
 	@Test
-	public void testGetSudoku() {
+	public void testGetBoard() {
 		SudokuBoard board = sudokuService.getBoard(Constants.EASY_LEVEL, SIZE);
 		assertNotNull(board);
 		assertEquals(board.getDifficultyLevel(), Constants.EASY_LEVEL);
+		assertEquals(board.getSize(), SIZE);
 		assertNotNull(board.getId());
 	}
 
@@ -39,7 +40,7 @@ public class SudokuServiceTest {
 	}
 
 	@Test
-	public void testValidateMove() {
+	public void testAllValidateMoves() {
 		SudokuBoard board = new SudokuBoard(Constants.EASY_LEVEL, SIZE);
 		Long id = 8218078219143876788L;
 		board.setId(id);

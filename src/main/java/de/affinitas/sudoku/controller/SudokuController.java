@@ -63,7 +63,7 @@ public class SudokuController {
 	 * <p>Validate the move of operator at front-end call. The movement is validate by a range of validations.</p>
 	 * 
 	 * */
-	@RequestMapping(value = "/validatemove/{id}/{x}/{y}/{number}", method = RequestMethod.GET)
+	@RequestMapping(value = "/validatemove/{id}/{x}/{y}/{number}", method = RequestMethod.PUT)
 	public MoveValidator validateMove(@PathVariable("id") long id, @PathVariable("x") int x, @PathVariable("y") int y, @PathVariable("number") int number) throws SudokuException {
 		return sudokuService.validateMove(id, x, y, number);
 	}

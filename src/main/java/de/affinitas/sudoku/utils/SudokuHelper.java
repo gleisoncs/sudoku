@@ -62,19 +62,12 @@ public class SudokuHelper {
 		return exampleSudoku;
 	}
 
-	public static MoveValidator updateAndValidateMove(int x, int y, int number, SudokuBoard board) {
+	public static boolean updateAndValidateMove(int x, int y, int number, SudokuBoard board) {
 		boolean result = isValidNumberInPosition(x, y, number, board.getBoard());
-
-		if (result) {
-			SudokuHelper.updateMove(x, y, number, board);
-			
-			if (isBoardSolvedCompletly(board.getBoard()))
-				return MoveValidator.COMPLETE;
-			else
-				return MoveValidator.VALID;
-		} else
-			return MoveValidator.INVALID;
+		return result;
 	}
+	
+	
 
 	private static boolean isValidNumberInPosition(int x, int y, int number, int[][] board) {
 		if (checkPositionDifZero(x, y, board))          return false;
@@ -88,14 +81,11 @@ public class SudokuHelper {
 		return board[x][y] != 0;
 	}
 
-	private static boolean isBoardSolvedCompletly(int[][] board) {
-		for (int x = 0; x < board.length; x++) {
-			for (int y = 0; y < board.length; y++) {
-				if (board[x][y] == 0) {
+	public static boolean isBoardSolvedCompletly(int[][] board) {
+		for (int x = 0; x < board.length; x++)
+			for (int y = 0; y < board.length; y++)
+				if (board[x][y] == 0)
 					return false;
-				}
-			}
-		}
 		return true;
 	}
 

@@ -68,7 +68,17 @@ public class SudokuService {
     public MoveValidator validateMove(long id, int x, int y, int number) throws SudokuException {
         SudokuBoard board =  database.getSudoku(id);
         if(board == null) throw new SudokuException(Constants.GENERIC_ERROR_CODE, "Oops, wrong Id, check and submit again.");
-        MoveValidator result = SudokuHelper.updateAndValidateMove(x, y, number, board);
-        return result;
+        
+        boolean result = SudokuHelper.updateAndValidateMove(x, y, number, board);
+
+		if (result) {
+			SudokuHelper.updateMove(x, y, number, board);
+			
+			if (SudokuHelper.isBoardSolvedCompletly(board.getBoard()))
+				return MoveValidator.COMPLETE;
+			else
+				return MoveValidator.VALID;
+		} else
+			return MoveValidator.INVALID;
     }
 }

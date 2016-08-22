@@ -14,7 +14,7 @@ public class SudokuHelperTest {
 			for (int y = 0; y < fakeBoard.length; y++)
 				if (fakeBoard[x][y] == 0)
 					toltalNumbersOnBoard++;
-		assertTrue("Number of zeros in board", toltalNumbersOnBoard == 1);
+		assertTrue("Number of zeros in board", toltalNumbersOnBoard == 52);
 	}
 
 	@Test
