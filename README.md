@@ -84,3 +84,4 @@ Output       : VALID
 - Time-out
 - Delete method (for rollback movement)
 - Persistence
+- Improve getBoardCoordinates method to show coordinates depends on the SIZE defined on board creation
