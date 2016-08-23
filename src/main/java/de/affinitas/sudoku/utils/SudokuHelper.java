@@ -18,7 +18,6 @@ package de.affinitas.sudoku.utils;
 
 import java.util.Arrays;
 
-import de.affinitas.sudoku.vo.MoveValidator;
 import de.affinitas.sudoku.vo.SudokuBoard;
 
 /**
@@ -49,38 +48,52 @@ public class SudokuHelper {
 			{ 9, 0, 7, 4, 0, 0, 0, 0, 0 }, 
 			{ 0, 0, 0, 0, 5, 7, 0, 0, 0 },
 			{ 6, 0, 0, 0, 0, 0, 0, 5, 0 } };
-//		int exampleSudoku[][] = new int[][] { 
-//			{ 0, 9, 1, 1, 4, 6, 5, 3, 8 }, 
-//			{ 4, 6, 5, 6, 3, 8, 7, 1, 9 },
-//			{ 3, 1, 8, 5, 7, 9, 6, 4, 2 }, 
-//			{ 5, 3, 9, 8, 6, 4, 2, 7, 1 }, 
-//			{ 2, 7, 6, 9, 1, 3, 4, 8, 5 },
-//			{ 8, 4, 1, 7, 2, 5, 9, 6, 3 }, 
-//			{ 9, 5, 7, 4, 8, 1, 3, 2, 6 }, 
-//			{ 1, 2, 3, 6, 5, 7, 8, 9, 4 },
-//			{ 6, 8, 4, 3, 9, 2, 1, 5, 7 } };
 		return exampleSudoku;
 	}
 
-	public static boolean updateAndValidateMove(int x, int y, int number, SudokuBoard board) {
+	/**
+	 * <p>Return false or true depends whether the number in position is valid</p>
+	 * 
+	 * */
+	public static boolean validateMove(int x, int y, int number, SudokuBoard board) {
 		boolean result = isValidNumberInPosition(x, y, number, board.getBoard());
 		return result;
 	}
 	
-	
-
+	/**
+	 * There are four validation that is important to consider a number valid.
+	 * 
+	 * isPositionDifZero - check the position is different of zero
+	 * isRowContainNumber - check whether a row contain a number passed by param
+	 * isColumnContainNumber - check whether a columns contain a number passed by param
+	 * isBoxContainNumber - check whether a box contain a number passed by param
+	 * 
+	 * @see isPositionDifZero
+	 * @see isRowContainNumber
+	 * @see isColumnContainNumber
+	 * @see isBoxContainNumber
+	 * */
 	private static boolean isValidNumberInPosition(int x, int y, int number, int[][] board) {
-		if (checkPositionDifZero(x, y, board))          return false;
-		if (checkRowContainNumber(x, number, board))    return false;
-		if (checkColumnContainNumber(y, number, board)) return false;
-		if (checkBoxContainNumber(x, y, number, board)) return false;
+		if (isPositionDifZero(x, y, board))          return false;
+		if (isRowContainNumber(x, number, board))    return false;
+		if (isColumnContainNumber(y, number, board)) return false;
+		if (isBoxContainNumber(x, y, number, board)) return false;
 		return true;
 	}
 
-	private static boolean checkPositionDifZero(int x, int y, int[][] board) {
+	/**
+	 * <p>Validate if a coordinates x and y in a Cartesian Coordinates is different of zero.</p>
+	 * 
+	 * */
+	private static boolean isPositionDifZero(int x, int y, int[][] board) {
 		return board[x][y] != 0;
 	}
 
+	/**
+	 * <p>Return false if at least one position inside a board. Return true if all positions is filled, 
+	 * it means all positions different at zero.</p>
+	 * 
+	 * */
 	public static boolean isBoardSolvedCompletly(int[][] board) {
 		for (int x = 0; x < board.length; x++)
 			for (int y = 0; y < board.length; y++)
@@ -89,7 +102,10 @@ public class SudokuHelper {
 		return true;
 	}
 
-	public static boolean checkRowContainNumber(int x, int number, int[][] a) {
+	/**
+	 * <p>Find inside an array at specific row <b>x</b>, emulating a Cartesian Coordinates, passed by param whether a number exists in a board.</p> 
+	 * */
+	public static boolean isRowContainNumber(int x, int number, int[][] a) {
 		for (int column = 0; column <= 8; column++) {
 			if (a[x][column] == number) {
 				return true;
@@ -98,7 +114,11 @@ public class SudokuHelper {
 		return false;
 	}
 
-	public static boolean checkColumnContainNumber(int y, int number, int[][] a) {
+	
+	/**
+	 * <p>Find inside an array at specific column <b>y</b>, emulating a Cartesian Coordinates, passed by param whether a number exists in a board.</p> 
+	 * */
+	public static boolean isColumnContainNumber(int y, int number, int[][] a) {
 		for (int row = 0; row <= 8; row++) {
 			if (a[row][y] == number) {
 				return true;
@@ -108,7 +128,17 @@ public class SudokuHelper {
 		return false;
 	}
 
-	public static boolean checkBoxContainNumber(int x, int y, int number, int[][] board) {
+	/**
+	 * <p>Return true if a number is contained in a board. Return false instead.<p>
+	 * 
+	 * <p>Define which quadrant it's necessary to find the information and get coordinates </p>
+	 * <p>In a specific array of array or 2D Array, has <b>x</b> and <b>y</b> coordinates or quadrants, this emulate a Cartesian Coordinates.
+	 *  
+	 *  @see getQuadrantNumber
+	 *  @see getBoardCoordinates
+	 *  @see isNumberContainedInBox
+	 * */
+	public static boolean isBoxContainNumber(int x, int y, int number, int[][] board) {
 		int quadrantX[] = new int[3];
 		int quadrantY[] = new int[3];
         switch(x) {
@@ -128,13 +158,21 @@ public class SudokuHelper {
         return isNumberContainedInBox(number, board, boardCoordinate);
 	}
 
-	private static boolean isNumberContainedInBox(int number, int[][] board, int[] boardCoordinate) {
-		for(int i = boardCoordinate[0]; i <= boardCoordinate[0] + 2; i++)
-            for(int j = boardCoordinate[1]; j <= boardCoordinate[1] + 2; j++)
+	/**
+	 * <p>Verify if a number <b>number</b> exists inside a array of array <b>board></b> given follow coordinates <b>boardCoordinates</b>.</p>
+	 * 
+	 * */
+	private static boolean isNumberContainedInBox(int number, int[][] board, int[] boardCoordinates) {
+		for(int i = boardCoordinates[0]; i <= boardCoordinates[0] + 2; i++)
+            for(int j = boardCoordinates[1]; j <= boardCoordinates[1] + 2; j++)
                 if (board[i][j] == number) return true;
         return false;
 	}
 
+	/**
+	 * <p>Return a quadrant number where the position is encountered.</p>
+	 * 
+	 * */
 	private static int getQuadrantNumber(int[] quadrantX, int[] quadrantY) {
 		for (int a = 0; a < quadrantX.length; a++)
 			for (int b = 0; b < quadrantY.length; b++)
@@ -143,8 +181,13 @@ public class SudokuHelper {
 		return 0;
 	}
 
+	/**
+	 * <p>Return the position in Cartesian Coordinates based on <b>squareNumber</b>. 
+	 * Follow a given 9x9 sudoku board. 
+	 * */
 	public static int[] getBoardCoordinates(int squareNumber) {
-        int[] startCoordinates = null;
+        //FIXME Improve getBoardCoordinates method to show coordinates depends on the SIZE defined on board creation
+		int[] startCoordinates = null;
 
         switch (squareNumber) {
             case 1: startCoordinates = new int[]{0, 0}; break;
@@ -160,6 +203,10 @@ public class SudokuHelper {
         return startCoordinates;
     }
 	
+	/**
+	 * <p>Enables the developer to see whats is going on inside the board.</p>
+	 *   
+	 * */
     public static void printBoard(int[][] a) {
 		for (int y = 0; y <= 8; y++) {
 			for (int x = 0; x <= 8; x++) {
@@ -175,13 +222,11 @@ public class SudokuHelper {
 		}
 	}
 
+    /**
+     * <p>Update the board with a given number and position.</p>
+     * 
+     * */
 	public static void updateMove(int x, int y, int number, SudokuBoard board) {
 		board.setValueOnBoard(x, y, number);
-	}
-	
-	public static void main(String args[]){
-		int[] a = new int[]{4,5,6};
-		int[] b = new int[]{2,5,8};
-		System.out.println(Arrays.stream(a).filter(x -> Arrays.stream(b).anyMatch(y -> y == x)).toArray()[0]);
 	}
 }

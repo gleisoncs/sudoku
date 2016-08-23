@@ -13,4 +13,7 @@ public class Constants {
 	public static final String BOARD_EXAMPLE2 = "087492563534678912962135784458216397273849651619357428841963275726584139395721846";
 	
 	public static final int GENERIC_ERROR_CODE = 1;
+	public static final int DELETE_ERROR_CODE = 2;
+	
+	public static final int ZERO = 0;
 }

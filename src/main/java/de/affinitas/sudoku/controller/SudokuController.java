@@ -38,6 +38,8 @@ import de.affinitas.sudoku.vo.SudokuBoard;
  * 
  * 
  * @author  Gleison Caetano
+ * @see SudokuBoard
+ * @see MoveValidator
  */
 @RestController
 public class SudokuController {
@@ -45,26 +47,41 @@ public class SudokuController {
 	@Inject
 	SudokuService sudokuService;
 
+	/**
+	 * <p>Method responsible to a introduction about software app.</p>
+	 * 
+	 * */
+	
 	@RequestMapping("/")
 	public String index() {
 		return "Welcome to Sudoku Affinitas";
 	}
 
 	/**
-	 * Method brings the fixed board as the example, it brings a EASY challenge 
+	 * <p>Method brings the fixed board as the example, it brings a EASY challenge.</p>
 	 * 
 	 * */
 	@RequestMapping(value = "/getboard/{difficultyLevel}/{size}", method = RequestMethod.GET)
 	public SudokuBoard getboard(@PathVariable int difficultyLevel, @PathVariable int size) {
-		return sudokuService.getBoard(difficultyLevel, size);
+		return sudokuService.getSudokuBoard(difficultyLevel, size);
 	}
 
 	/**
 	 * <p>Validate the move of operator at front-end call. The movement is validate by a range of validations.</p>
 	 * 
 	 * */
-	@RequestMapping(value = "/validatemove/{id}/{x}/{y}/{number}", method = RequestMethod.PUT)
-	public MoveValidator validateMove(@PathVariable("id") long id, @PathVariable("x") int x, @PathVariable("y") int y, @PathVariable("number") int number) throws SudokuException {
-		return sudokuService.validateMove(id, x, y, number);
+	@RequestMapping(value = "/makemove/{id}/{x}/{y}/{number}", method = RequestMethod.PUT)
+	public MoveValidator makeMove(@PathVariable("id") long id, @PathVariable("x") int x, @PathVariable("y") int y, @PathVariable("number") int number) throws SudokuException {
+		return sudokuService.makeMove(id, x, y, number);
 	}
+	
+	/**
+	 * <p>Delete a movement occurred older times. It's necessary execute when some position wasn't correct.</p>
+	 * 
+	 * */
+	@RequestMapping(value = "/deletemove/{id}/{x}/{y}", method = RequestMethod.DELETE)
+	public MoveValidator deleteMove(@PathVariable("id") long id, @PathVariable("x") int x, @PathVariable("y") int y, @PathVariable("number") int number) throws SudokuException {
+		return sudokuService.deleteMove(id, x, y);
+	}
+
 }
