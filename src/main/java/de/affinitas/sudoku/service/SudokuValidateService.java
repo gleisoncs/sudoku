@@ -4,6 +4,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import de.affinitas.sudoku.dao.Store;
+import de.affinitas.sudoku.exceptions.SudokuInvalidDataException;
 import de.affinitas.sudoku.exceptions.SudokuNotFoundException;
 import de.affinitas.sudoku.utils.Constants;
 import de.affinitas.sudoku.vo.MoveValidator;
@@ -99,11 +100,28 @@ public class SudokuValidateService {
 	 * @see isBoxContainNumber
 	 * */
 	private static boolean isValidNumberInPosition(int x, int y, int number, int[][] board) {
+		if (isValidNumbers(x, y, number))            return false;
 		if (isPositionDifZero(x, y, board))          return false;
 		if (isRowContainNumber(x, number, board))    return false;
 		if (isColumnContainNumber(y, number, board)) return false;
 		if (isBoxContainNumber(x, y, number, board)) return false;
 		return true;
+	}
+
+	private static boolean isValidNumbers(int x, int y, int number) {
+		if (number > Constants.MAX_DIGIT || number < Constants.MIN_DIGIT) {
+			throw new SudokuInvalidDataException("Invalid move digit: " + number);
+		}
+
+		if (x + 1 > Constants.MAX_DIGIT || x + 1 < Constants.MIN_DIGIT) {
+			throw new SudokuInvalidDataException("Invalid move row: " + x);
+		}
+
+		if (y + 1 > Constants.MAX_DIGIT || y + 1 < Constants.MIN_DIGIT) {
+			throw new SudokuInvalidDataException("Invalid move col: " + y);
+		}
+		
+		return false;
 	}
 
 	/**

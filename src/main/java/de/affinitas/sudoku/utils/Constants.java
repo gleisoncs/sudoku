@@ -9,10 +9,10 @@ public class Constants {
 	
 	public static final int TOTAL_NUMBERS_ON_BOARD = 50;
 	
-	public static final String BOARD_EXAMPLE1 = "700040530005008010008509040539060001000010005800720900907400000000057000600000050";
-	public static final String BOARD_EXAMPLE2 = "087492563534678912962135784458216397273849651619357428841963275726584139395721846";
-	
 	public static final int GENERIC_ERROR_CODE = 1;
 	
 	public static final int ZERO = 0;
+	
+	public static final int MIN_DIGIT = 1;
+	public static final int MAX_DIGIT = 9;
 }
