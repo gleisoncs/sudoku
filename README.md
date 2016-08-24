@@ -74,7 +74,7 @@ This returns a the following attributes
 - COMPLETE   : if the board is completed
 - Exception  : if the board didn't encountered id or id is invalid
                    
-Example      : http://localhost:8080/validatemove/100001/0/1/9
+Example      : http://localhost:8080/makemove/100001/0/1/9
     
 Output       : VALID
 
