@@ -1,65 +1,92 @@
-/*
- * Copyright (C) 2016 The Affinitas Expert Group
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-package de.affinitas.sudoku.utils;
+package de.affinitas.sudoku.service;
+
+import javax.inject.Inject;
 
 
-import java.util.Arrays;
+import javax.inject.Named;
 
+import de.affinitas.sudoku.dao.Store;
+import de.affinitas.sudoku.exceptions.SudokuException;
+import de.affinitas.sudoku.utils.Constants;
+import de.affinitas.sudoku.vo.MoveValidator;
 import de.affinitas.sudoku.vo.SudokuBoard;
 
 /**
- * Class supports the operation of Controller
+ * <p>Class supports controller and its functions. It provides an way to save the data provided from operator
+ * and manipulation information about sudoku board.</p>
  * 
- * Methods generateFixedNumbersForSudokuFromExample, 
- * 
- * @author Gleison Caetano
- * @see 
- * @since 1.0
  * */
-public class SudokuHelper {
 
-	
-	/**
-	 * Method return a array of integers and the main goal is form a sudoku 
-	 * of Cartesian Coordinates to the front-end.
-	 * 
-	 * */
-	public static int[][] generateFixedNumbersForSudokuFromExample() {
-		int exampleSudoku[][] = new int[][] { 
-			{ 7, 0, 0, 0, 4, 0, 5, 3, 0 }, 
-			{ 0, 0, 5, 0, 0, 8, 0, 1, 0 },
-			{ 0, 0, 8, 5, 0, 9, 0, 4, 0 }, 
-			{ 5, 3, 9, 0, 6, 0, 0, 0, 1 }, 
-			{ 0, 0, 0, 0, 1, 0, 0, 0, 5 },
-			{ 8, 0, 0, 7, 2, 0, 9, 0, 0 }, 
-			{ 9, 0, 7, 4, 0, 0, 0, 0, 0 }, 
-			{ 0, 0, 0, 0, 5, 7, 0, 0, 0 },
-			{ 6, 0, 0, 0, 0, 0, 0, 5, 0 } };
-		return exampleSudoku;
-	}
+@Named
+public class SudokuValidateService {
 
-	/**
-	 * <p>Return false or true depends whether the number in position is valid</p>
-	 * 
-	 * */
-	public static boolean validateMove(int x, int y, int number, SudokuBoard board) {
-		boolean result = isValidNumberInPosition(x, y, number, board.getBoard());
-		return result;
+    @Inject
+    Store database;
+
+    /**
+     * <p>validateMove method retrieve the Sudoku game from the 'Database'. This method validates the move from operator.</p>
+     * 
+     * <p>This method contains the logic of process.
+     * 
+     * <p>Attributes:</p>
+     * <b>long id<b> is the uniqueId generated from sudoku board
+     * <b>int x<b> means the position 'X' based on Cartesian Coordinates (<b>X</b>,Y)
+     * <b>int y<b> means the position 'Y' based on Cartesian Coordinates (X, <b>Y</b>)
+     * <b>int number<b> indicates the number received by operator on board in front end application
+     * 
+     * @see SudokuBoard
+     * @see MoveValidator
+     * @see SudokuHelper
+     * 
+     * @param id
+     * @param x
+     * @param y
+     * @param number
+     *  
+     * */
+    public MoveValidator makeMove(long id, int x, int y, int number) throws SudokuException {
+        SudokuBoard board = retrieveSudoku(id);
+        boolean result = isValidNumberInPosition(x, y, number, board.getBoard());
+		if (result) {
+			updateMove(x, y, number, board);
+			if (isBoardSolvedCompletly(board.getBoard()))
+				return MoveValidator.COMPLETE;
+			else
+				return MoveValidator.VALID;
+		} else
+			return MoveValidator.INVALID;
+    }
+
+	private SudokuBoard retrieveSudoku(long id) throws SudokuException {
+		SudokuBoard board =  database.getSudoku(id);
+        if(board == null) throw new SudokuException(Constants.GENERIC_ERROR_CODE, "Oops, wrong Id, check and submit again.");
+		return board;
 	}
-	
+    
+    /**
+     * <p>deleteMove method recover the Sudoku game from the 'Database' and remove the old move from board.</p>
+     * 
+     * <p>Attributes:</p>
+     * <b>long id<b> is the uniqueId generated from sudoku board
+     * <b>int x<b> means the position 'X' based on Cartesian Coordinates (<b>X</b>,Y)
+     * <b>int y<b> means the position 'Y' based on Cartesian Coordinates (X, <b>Y</b>)
+     * 
+     * @see SudokuBoard
+     * @see MoveValidator
+     * @see SudokuHelper
+     * 
+     * @param id
+     * @param x
+     * @param y
+     * @param number
+     *  
+     * */
+    public MoveValidator deleteMove(long id, int x, int y) throws SudokuException {
+    	SudokuBoard board = retrieveSudoku(id);		
+    	updateMove(x, y, Constants.ZERO, board);
+		return MoveValidator.VALID;
+    }
+    
 	/**
 	 * There are four validation that is important to consider a number valid.
 	 * 
@@ -105,7 +132,7 @@ public class SudokuHelper {
 	/**
 	 * <p>Find inside an array at specific row <b>x</b>, emulating a Cartesian Coordinates, passed by param whether a number exists in a board.</p> 
 	 * */
-	public static boolean isRowContainNumber(int x, int number, int[][] a) {
+	private static boolean isRowContainNumber(int x, int number, int[][] a) {
 		for (int column = 0; column <= 8; column++) {
 			if (a[x][column] == number) {
 				return true;
@@ -118,7 +145,7 @@ public class SudokuHelper {
 	/**
 	 * <p>Find inside an array at specific column <b>y</b>, emulating a Cartesian Coordinates, passed by param whether a number exists in a board.</p> 
 	 * */
-	public static boolean isColumnContainNumber(int y, int number, int[][] a) {
+	private static boolean isColumnContainNumber(int y, int number, int[][] a) {
 		for (int row = 0; row <= 8; row++) {
 			if (a[row][y] == number) {
 				return true;
@@ -138,7 +165,7 @@ public class SudokuHelper {
 	 *  @see getBoardCoordinates
 	 *  @see isNumberContainedInBox
 	 * */
-	public static boolean isBoxContainNumber(int x, int y, int number, int[][] board) {
+	private static boolean isBoxContainNumber(int x, int y, int number, int[][] board) {
 		int quadrantX[] = new int[3];
 		int quadrantY[] = new int[3];
         switch(x) {
@@ -228,5 +255,5 @@ public class SudokuHelper {
      * */
 	public static void updateMove(int x, int y, int number, SudokuBoard board) {
 		board.setValueOnBoard(x, y, number);
-	}
+	}    
 }

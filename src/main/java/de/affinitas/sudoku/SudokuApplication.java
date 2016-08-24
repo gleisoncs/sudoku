@@ -16,6 +16,6 @@ import org.springframework.context.ApplicationContext;
 public class SudokuApplication {
 
     public static void main(String[] args) {
-        ApplicationContext ctx = SpringApplication.run(SudokuApplication.class, args);
+    	SpringApplication.run(SudokuApplication.class, args);
     }
 }

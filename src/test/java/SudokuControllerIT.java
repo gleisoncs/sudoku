@@ -17,7 +17,7 @@ import de.affinitas.sudoku.SudokuApplication;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
-@ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { SudokuApplication.class })
+@ContextConfiguration
 public class SudokuControllerIT {
 	
 	private int port = 8080;

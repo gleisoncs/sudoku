@@ -17,13 +17,16 @@ package de.affinitas.sudoku.controller;
 
 import javax.inject.Inject;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import de.affinitas.sudoku.exceptions.SudokuException;
-import de.affinitas.sudoku.service.SudokuService;
+import de.affinitas.sudoku.service.SudokuGenerateBoardService;
+import de.affinitas.sudoku.service.SudokuValidateService;
 import de.affinitas.sudoku.vo.MoveValidator;
 import de.affinitas.sudoku.vo.SudokuBoard;
 
@@ -45,7 +48,12 @@ import de.affinitas.sudoku.vo.SudokuBoard;
 public class SudokuController {
 
 	@Inject
-	SudokuService sudokuService;
+	SudokuValidateService sudokuValidateService;
+
+	@Inject
+	SudokuGenerateBoardService sudokuGenerateService;
+	
+	private static final Logger logger = LoggerFactory.getLogger(SudokuController.class);
 
 	/**
 	 * <p>Method responsible to a introduction about software app.</p>
@@ -54,6 +62,7 @@ public class SudokuController {
 	
 	@RequestMapping("/")
 	public String index() {
+		logger.debug("index()");
 		return "Welcome to Sudoku Affinitas";
 	}
 
@@ -63,7 +72,8 @@ public class SudokuController {
 	 * */
 	@RequestMapping(value = "/getboard/{difficultyLevel}/{size}", method = RequestMethod.GET)
 	public SudokuBoard getboard(@PathVariable int difficultyLevel, @PathVariable int size) {
-		return sudokuService.getSudokuBoard(difficultyLevel, size);
+		logger.debug("getboard(): difficultyLevel={}, size={}", difficultyLevel, size);
+		return sudokuGenerateService.generateSudoku(difficultyLevel, size);
 	}
 
 	/**
@@ -72,7 +82,8 @@ public class SudokuController {
 	 * */
 	@RequestMapping(value = "/makemove/{id}/{x}/{y}/{number}", method = RequestMethod.PUT)
 	public MoveValidator makeMove(@PathVariable("id") long id, @PathVariable("x") int x, @PathVariable("y") int y, @PathVariable("number") int number) throws SudokuException {
-		return sudokuService.makeMove(id, x, y, number);
+		logger.debug("makeMove(): id={}, x={}, y={}, number={}", id, x, y, number);
+		return sudokuValidateService.makeMove(id, x, y, number);
 	}
 	
 	/**
@@ -81,7 +92,7 @@ public class SudokuController {
 	 * */
 	@RequestMapping(value = "/deletemove/{id}/{x}/{y}", method = RequestMethod.DELETE)
 	public MoveValidator deleteMove(@PathVariable("id") long id, @PathVariable("x") int x, @PathVariable("y") int y, @PathVariable("number") int number) throws SudokuException {
-		return sudokuService.deleteMove(id, x, y);
+		logger.debug("deleteMove(): id={}, x={}, y={}, number={}", id, x, y, number);
+		return sudokuValidateService.deleteMove(id, x, y);
 	}
-
 }
