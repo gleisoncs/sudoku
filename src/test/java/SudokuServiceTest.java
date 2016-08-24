@@ -1,4 +1,6 @@
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import javax.inject.Inject;
 
@@ -9,7 +11,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
 import de.affinitas.sudoku.dao.Store;
-import de.affinitas.sudoku.exceptions.SudokuException;
+import de.affinitas.sudoku.exceptions.SudokuNotFoundException;
 import de.affinitas.sudoku.service.SudokuGenerateBoardService;
 import de.affinitas.sudoku.service.SudokuValidateService;
 import de.affinitas.sudoku.utils.Constants;
@@ -41,7 +43,7 @@ public class SudokuServiceTest {
 	}
 
 	@Test
-	public void testIfMoveIsValid() throws SudokuException {
+	public void testIfMoveIsValid() throws SudokuNotFoundException {
 		SudokuBoard board = sudokuGenerateService.generateSudoku(Constants.EASY_LEVEL, SIZE);
 		assertEquals(sudokuValidationService.makeMove(board.getId(), 0, 1, 9), MoveValidator.VALID);
 	}
@@ -55,8 +57,8 @@ public class SudokuServiceTest {
 		assertNotNull(board.getId());
 	}
 
-	@Test(expected = SudokuException.class)
-	public void testValidateMoveWithNonExistentId() throws SudokuException {
+	@Test(expected = SudokuNotFoundException.class)
+	public void testValidateMoveWithNonExistentId() throws SudokuNotFoundException {
 		sudokuValidationService.makeMove(1234, 4, 5, 8);
 	}
 
@@ -116,7 +118,7 @@ public class SudokuServiceTest {
 			assertEquals(MoveValidator.VALID, sudokuValidationService.makeMove(board.getId(), 8, 5, 2));
 			assertEquals(MoveValidator.VALID, sudokuValidationService.makeMove(board.getId(), 8, 6, 1));
 			assertEquals(MoveValidator.COMPLETE, sudokuValidationService.makeMove(board.getId(), 8, 8, 7));
-		} catch (SudokuException e) {
+		} catch (SudokuNotFoundException e) {
 			e.printStackTrace();
 		}
 	}

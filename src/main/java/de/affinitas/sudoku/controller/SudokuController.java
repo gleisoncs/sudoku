@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import de.affinitas.sudoku.exceptions.SudokuException;
+import de.affinitas.sudoku.exceptions.SudokuNotFoundException;
 import de.affinitas.sudoku.service.SudokuGenerateBoardService;
 import de.affinitas.sudoku.service.SudokuValidateService;
 import de.affinitas.sudoku.vo.MoveValidator;
@@ -81,7 +81,7 @@ public class SudokuController {
 	 * 
 	 * */
 	@RequestMapping(value = "/makemove/{id}/{x}/{y}/{number}", method = RequestMethod.PUT)
-	public MoveValidator makeMove(@PathVariable("id") long id, @PathVariable("x") int x, @PathVariable("y") int y, @PathVariable("number") int number) throws SudokuException {
+	public MoveValidator makeMove(@PathVariable("id") long id, @PathVariable("x") int x, @PathVariable("y") int y, @PathVariable("number") int number) throws SudokuNotFoundException {
 		logger.debug("makeMove(): id={}, x={}, y={}, number={}", id, x, y, number);
 		return sudokuValidateService.makeMove(id, x, y, number);
 	}
@@ -91,7 +91,7 @@ public class SudokuController {
 	 * 
 	 * */
 	@RequestMapping(value = "/deletemove/{id}/{x}/{y}", method = RequestMethod.DELETE)
-	public MoveValidator deleteMove(@PathVariable("id") long id, @PathVariable("x") int x, @PathVariable("y") int y, @PathVariable("number") int number) throws SudokuException {
+	public MoveValidator deleteMove(@PathVariable("id") long id, @PathVariable("x") int x, @PathVariable("y") int y, @PathVariable("number") int number) throws SudokuNotFoundException {
 		logger.debug("deleteMove(): id={}, x={}, y={}, number={}", id, x, y, number);
 		return sudokuValidateService.deleteMove(id, x, y);
 	}

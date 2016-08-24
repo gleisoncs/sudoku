@@ -1,12 +1,10 @@
 package de.affinitas.sudoku.service;
 
 import javax.inject.Inject;
-
-
 import javax.inject.Named;
 
 import de.affinitas.sudoku.dao.Store;
-import de.affinitas.sudoku.exceptions.SudokuException;
+import de.affinitas.sudoku.exceptions.SudokuNotFoundException;
 import de.affinitas.sudoku.utils.Constants;
 import de.affinitas.sudoku.vo.MoveValidator;
 import de.affinitas.sudoku.vo.SudokuBoard;
@@ -44,7 +42,7 @@ public class SudokuValidateService {
      * @param number
      *  
      * */
-    public MoveValidator makeMove(long id, int x, int y, int number) throws SudokuException {
+    public MoveValidator makeMove(long id, int x, int y, int number) throws SudokuNotFoundException {
         SudokuBoard board = retrieveSudoku(id);
         boolean result = isValidNumberInPosition(x, y, number, board.getBoard());
 		if (result) {
@@ -57,9 +55,9 @@ public class SudokuValidateService {
 			return MoveValidator.INVALID;
     }
 
-	private SudokuBoard retrieveSudoku(long id) throws SudokuException {
+	private SudokuBoard retrieveSudoku(long id) throws SudokuNotFoundException {
 		SudokuBoard board =  database.getSudoku(id);
-        if(board == null) throw new SudokuException(Constants.GENERIC_ERROR_CODE, "Oops, wrong Id, check and submit again.");
+        if(board == null) throw new SudokuNotFoundException("Oops, wrong Id, check and submit again.");
 		return board;
 	}
     
@@ -81,7 +79,7 @@ public class SudokuValidateService {
      * @param number
      *  
      * */
-    public MoveValidator deleteMove(long id, int x, int y) throws SudokuException {
+    public MoveValidator deleteMove(long id, int x, int y) throws SudokuNotFoundException {
     	SudokuBoard board = retrieveSudoku(id);		
     	updateMove(x, y, Constants.ZERO, board);
 		return MoveValidator.VALID;
